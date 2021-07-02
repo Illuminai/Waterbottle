@@ -4,8 +4,33 @@ on: [push, pull_request]
 
 jobs:
   Build:
-    runs-on: ubuntu-latest
-      
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [linux, windows, macos]
+        
+        include:
+          - build: linux
+            name: "Linux"
+            os: ubuntu-latest
+            toolchain: stable
+            target: x86_64-unknown-linux-gnu
+            
+          - build: windows
+            name: "Windows"
+            os: windows-latest
+            toolchain: stable
+            target: x86_64-pc-windows-msvc
+            
+          - build: macos
+            name: "macOS"
+            os: macos-latest
+            toolchain: stable
+            target: x86_64-apple-darwin
+  
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v2
@@ -22,19 +47,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cargo
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo
+          key: ${{ matrix.name }}-cargo-${{ hashFiles("Cargo.toml") }}
             
       - name: Cache Cargo target
         uses: actions/cache@v1
         with:
           path: target
-          key: ${{ runner.os }}-cargo-target-${{ hashFiles('Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-target-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo-target
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles("Cargo.toml") }}
           
       - name: Build Release
         uses: actions-rs/cargo@v1
