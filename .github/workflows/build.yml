@@ -47,13 +47,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cargo
-          key: ${{ matrix.name }}-cargo-${{ hashFiles("Cargo.toml") }}
+          key: ${{ matrix.name }}-cargo-${{ hashFiles('Cargo.toml') }}
             
       - name: Cache Cargo target
         uses: actions/cache@v1
         with:
           path: target
-          key: ${{ runner.os }}-cargo-target-${{ hashFiles("Cargo.toml") }}
+          key: ${{ matrix.name }}-cargo-target-${{ hashFiles('Cargo.toml') }}
           
       - name: Build Release
         uses: actions-rs/cargo@v1
