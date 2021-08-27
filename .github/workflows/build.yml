@@ -35,7 +35,14 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v2
         with:
-          submodules: recursive 
+          submodules: recursive
+
+      - name: Install OpenCL ICD
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install ocl-icd-opencl-dev
+        if: ${{ matrix.name == 'Linux' }}
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
